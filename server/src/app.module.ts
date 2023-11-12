@@ -9,6 +9,7 @@ import { SecretsManagerModule } from "./providers/secrets/secretsManager.module"
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { ServeStaticOptionsService } from "./serveStaticOptions.service";
 import { ConfigModule } from "@nestjs/config";
+import { SecretsModule } from "./secrets/secret.module";
 
 @Module({
   controllers: [],
@@ -18,6 +19,7 @@ import { ConfigModule } from "@nestjs/config";
     AddressModule,
     ProductModule,
     HealthModule,
+    SecretsModule,
     PrismaModule,
     SecretsManagerModule,
     ConfigModule.forRoot({ isGlobal: true }),
