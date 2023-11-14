@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { SecretsManagerServiceBase } from "./base/secretsManager.service.base";
+import { SecretsManagerServiceBase } from "../base/secretsManager.service.base";
 import { BitwardenClient, ClientSettings, DeviceType, LogLevel, SecretIdentifierResponse } from "@bitwarden/sdk-napi";
 
 
@@ -35,12 +35,11 @@ export class SecretsManagerService extends SecretsManagerServiceBase {
     // List secrets
     const secretsList = await this.bitwardenClient.secrets().list(this.organisationId);
 
-    let secretId:SecretIdentifierResponse[]
 
     console.log(secretsList)
     if(secretsList.success){
       if(secretsList.data){
-        secretId = secretsList.data.data.filter((sec) => sec.key === key)
+        const secretId = secretsList.data.data.filter((sec:SecretIdentifierResponse) => sec.key === key)
 
         const secret = await this.bitwardenClient.secrets().get(secretId[0].id)
 
