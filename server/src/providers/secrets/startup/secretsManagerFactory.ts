@@ -2,8 +2,7 @@ import { Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { BitwardenClient, ClientSettings, DeviceType, LogLevel,
     SecretIdentifierResponse } from "@bitwarden/sdk-napi";
-
-const secretNames = ["key1", "key2"]
+import { Secrets } from "./secrets";
 
 export const secretsManagerFactory = {
     provide: "BITWARDEN_SECRETS_MANAGER",
@@ -34,7 +33,7 @@ export const secretsManagerFactory = {
 
         const secretsNamesIds: string[] = [] 
         secretsList.data?.data.forEach((sec:SecretIdentifierResponse) => {
-            if(secretNames.includes(sec.key)) secretsNamesIds.push(sec.id)
+            if(Object.values(Secrets).includes(sec.key)) secretsNamesIds.push(sec.id)
         })
 
         const response = await bitwardenClient.secrets().getByIds(secretsNamesIds)
@@ -43,7 +42,7 @@ export const secretsManagerFactory = {
             // throw Error(`Error fetching secrets from secretManager :${response.errorMessage}`)
         }
         
-        var secrets: Partial<Record<string, unknown>> = {}
+        var secrets: Partial<Record<Secrets, unknown>> = {}
         
         if(response.data){
             for(const secret of response.data?.data){
