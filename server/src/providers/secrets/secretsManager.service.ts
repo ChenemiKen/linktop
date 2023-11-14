@@ -1,12 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { SecretsManagerServiceBase } from "./base/secretsManager.service.base";
-import { BitwardenClient, ClientSettings, DeviceType, LogLevel } from "@bitwarden/sdk-napi";
+import { BitwardenClient, ClientSettings, DeviceType, LogLevel, SecretIdentifierResponse } from "@bitwarden/sdk-napi";
 
 
 @Injectable()
 export class SecretsManagerService extends SecretsManagerServiceBase {
   private readonly settings: ClientSettings
+  private readonly organisationId: string
   private readonly accessToken : string
   private readonly bitwardenClient: BitwardenClient
 
@@ -21,6 +22,7 @@ export class SecretsManagerService extends SecretsManagerServiceBase {
     };
 
     this.accessToken = configService.get("BITWARDEN_ACCESS_TOKEN")!
+    this.organisationId = configService.get("BITWARDEN_ORGANISATION_ID")!
     this.bitwardenClient = new BitwardenClient(this.settings, LogLevel.Info)
   }
 
@@ -29,12 +31,25 @@ export class SecretsManagerService extends SecretsManagerServiceBase {
     if(!auth.success){
       throw Error("bitwarden authentication failed");
     }
-    const secret = await this.bitwardenClient.secrets().get("63fc584f-7801-498b-bf36-b0b40011052d")
 
-    console.log(secret.data)
-    if(secret.success){
-      if(secret.data){
-        return JSON.parse(secret.data.toString())
+    // List secrets
+    const secretsList = await this.bitwardenClient.secrets().list(this.organisationId);
+
+    let secretId:SecretIdentifierResponse[]
+
+    console.log(secretsList)
+    if(secretsList.success){
+      if(secretsList.data){
+        secretId = secretsList.data.data.filter((sec) => sec.key === key)
+
+        const secret = await this.bitwardenClient.secrets().get(secretId[0].id)
+
+        console.log(secret.data)
+        if(secret.success){
+          if(secret.data){
+            return secret.data.value as any
+          }
+        }
       }
     }
 

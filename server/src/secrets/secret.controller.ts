@@ -12,10 +12,10 @@ export class SecretController {
     // super(service);
   }
 
-  @common.Get()
-  async getASecret(@common.Req() request: Request): Promise<string|null> {
+  @common.Get("/:key")
+  async getASecret(@common.Param() param:{key:string}): Promise<string|null> {
     const configService = new ConfigService()
     const secretManager = new SecretsManagerService(configService)
-    return await secretManager.getSecret("key")
+    return await secretManager.getSecret(param.key)
   }
 }

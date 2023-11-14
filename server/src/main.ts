@@ -25,7 +25,7 @@ const accessToken = "0.23365048-37f9-418c-b665-b0b500027f61.B6uLF9x1pprXAPJMhN9j
 const { PORT = 3000 } = process.env;
 
 async function main() {
-  await bitwarden()
+  // await bitwarden()
   const app = await NestFactory.create(AppModule, { cors: true });
 
   app.setGlobalPrefix("api");
