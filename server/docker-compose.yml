@@ -9,8 +9,6 @@ services:
       - ${PORT}:3000
     environment:
       BCRYPT_SALT: ${BCRYPT_SALT}
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-      JWT_EXPIRATION: ${JWT_EXPIRATION}
       DB_URL: mysql://${DB_USER}:${DB_PASSWORD}@db:3306/${DB_NAME}
     depends_on:
       - migrate
